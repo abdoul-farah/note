@@ -1,0 +1,4 @@
+.masonry {
+  display: grid;
+  grid-template-rows: masonry;
+}

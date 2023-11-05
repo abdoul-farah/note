@@ -1,0 +1,7 @@
+.main {
+  width: calc(100% - 240px);
+  height: 700px;
+  background-color: rgb(198, 198, 245);
+  margin: 500px;
+  padding-block: 100px;
+}
