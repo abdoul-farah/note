@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import Card from "@mui/material/Card";
@@ -10,10 +11,13 @@ import Typography from "@mui/material/Typography";
 
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
+import { useDispatch } from "react-redux";
+import { update } from "../store/index";
 import { useNavigate } from "react-router-dom";
 
 function CardNote({ note }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const deletCardHandler = async (id) => {
     if (confirm(`Are you sure you want to delete "${note.title}" ?`)) {
@@ -22,6 +26,7 @@ function CardNote({ note }) {
       });
 
       navigate("/");
+      dispatch(update(""));
     }
   };
   let bColor;

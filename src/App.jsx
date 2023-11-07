@@ -1,29 +1,41 @@
 import "./App.css";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom";
+
 import {
   createTheme,
   ThemeProvider,
   responsiveFontSizes,
 } from "@mui/material/styles";
-import { green } from "@mui/material/colors";
 
 import Root from "./pages/Root";
 import Notes from "./pages/Notes";
 import Create from "./pages/Create";
+import Error404 from "./pages/Error404";
+import ErrorCreate from "./pages/ErrorCreate";
 
+import CssBaseline from "@mui/material/CssBaseline";
 import { loader as loaderNotes } from "./pages/Notes";
+import { action as actionCreateNote } from "./pages/Create";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-    children: [
-      { index: true, element: <Notes />, loader: loaderNotes },
-      { path: "/create", element: <Create /> },
-    ],
-  },
-]);
-
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<Root />} errorElement={<Error404 />}>
+      <Route index element={<Notes />} loader={loaderNotes} />
+      <Route
+        path="create"
+        element={<Create />}
+        action={actionCreateNote}
+        errorElement={<ErrorCreate />}
+      />
+    </Route>
+  )
+);
 let theme = createTheme({
   palette: {
     primary: {
@@ -34,14 +46,13 @@ let theme = createTheme({
     },
     mode: "light",
   },
-  // typography:{
-  //   fontFamily:
-  // }
 });
+
 theme = responsiveFontSizes(theme);
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <RouterProvider router={router} />
     </ThemeProvider>
   );

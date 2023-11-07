@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
@@ -5,41 +6,15 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Form, redirect, useNavigation, json } from "react-router-dom";
 
 function Create() {
-  const [newNote, setNewNote] = useState({
-    title: "",
-    details: "",
-    category: "Todo",
-  });
-
-  const navigate = useNavigate();
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    console.log(newNote);
-
-    const res = await fetch("https://notes-3r0s.onrender.com/notes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newNote),
-    });
-
-    navigate("/");
-  };
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
   return (
-    <form onSubmit={submitHandler} id="form">
+    <Form method="POST" name="form">
       <Stack spacing={2} sx={{ maxWidth: "700px" }}>
-        <TextField
-          label="Title"
-          fullWidth
-          required
-          value={newNote.title}
-          onChange={(e) =>
-            setNewNote((prev) => ({ ...prev, title: e.target.value }))
-          }
-        />
+        <TextField label="Title" fullWidth required name="title" />
         <TextField
           id="outlined-multiline-static"
           label="Note"
@@ -47,19 +22,13 @@ function Create() {
           rows={5}
           fullWidth
           required
-          value={newNote.details}
-          onChange={(e) =>
-            setNewNote((prev) => ({ ...prev, details: e.target.value }))
-          }
+          name="details"
         />
 
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
-          name="radio-buttons-group"
-          value={newNote.category}
-          onChange={(e) =>
-            setNewNote((prev) => ({ ...prev, category: e.target.value }))
-          }
+          defaultValue="Todo"
+          name="category"
           required
         >
           <FormControlLabel value="Todo" control={<Radio />} label="Todo" />
@@ -71,12 +40,40 @@ function Create() {
           <FormControlLabel value="Work" control={<Radio />} label="Work" />
         </RadioGroup>
 
-        <Button type="submit" variant="contained" sx={{ width: { sm: 200 } }}>
-          submit
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{
+            width: { sm: 200 },
+            padding: { xs: "12px 16px", sm: "6px 16px" },
+          }}
+        >
+          {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
       </Stack>
-    </form>
+    </Form>
   );
 }
 
 export default Create;
+
+export async function action({ request }) {
+  const data = await request.formData();
+  const noteData = {
+    title: data.get("title"),
+    details: data.get("details"),
+    category: data.get("category"),
+  };
+
+  const res = await fetch("https://notes-3r0s.onrender.com/notes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(noteData),
+  });
+
+  if (!res.ok) {
+    throw json({ message: "Could not create the note" }, { status: 500 });
+  }
+
+  return redirect("/");
+}

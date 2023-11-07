@@ -6,16 +6,14 @@ import { Box, Typography } from "@mui/material";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
-import { update } from "../store/index";
 function Notes() {
   const notes = useLoaderData();
-  const dispatch = useDispatch();
+
   const searchInput = useSelector((state) => state.searchInput);
   const searchInputLength = searchInput.length;
-  console.log(searchInputLength);
 
   const [foundedNotes, setFoundedNotes] = useState([]);
   useEffect(() => {
@@ -29,11 +27,8 @@ function Notes() {
     };
 
     fetchNotes(searchInput).then((data) => setFoundedNotes(data));
-    // return () => {
-    //   dispatch(update(""));
-    // };
-  }, [dispatch, searchInput]);
-  console.log(foundedNotes);
+  }, [searchInput]);
+
   return (
     <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 900: 2, 1200: 3 }}>
       <Masonry gutter="10px">
