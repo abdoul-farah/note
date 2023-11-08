@@ -1,8 +1,17 @@
 import { Box, Typography } from "@mui/material";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import { useRouteError } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createNote } from "../store/index";
 function ErrorCreate() {
   const error = useRouteError();
+  const dispatch = useDispatch();
+  if (error.status === 500) {
+    console.log("error 500");
+    // dispatch(createNote());
+  } else {
+    dispatch(createNote());
+  }
   return (
     <div>
       {error && error.data && (
